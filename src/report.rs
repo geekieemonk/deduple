@@ -5,23 +5,28 @@ use std::path::{Path, PathBuf};
 use crate::cli::HashAlgorithm;
 
 #[derive(Serialize)]
-pub struct Report {
-    file1: String,
-    file2: String,
-    are_duplicates: bool,
-    algorithm_used: String,
-    quarantined: Option<String>,
+pub struct DuplicateGroup {
+    pub files: Vec<String>,
+    pub quarantined: Vec<String>,
 }
 
-pub fn generate_report(file1: &Path, file2: &Path, are_duplicates: bool, algo: &HashAlgorithm, quarantine_path: Option<PathBuf>, output_path: &Path) {
-    let report = Report {
-        file1: file1.display().to_string(),
-        file2: file2.display().to_string(),
-        are_duplicates,
-        algorithm_used: format!("{:?}", algo),
-        quarantined: quarantine_path.map(|p| p.display().to_string()),
-    };
+#[derive(Serialize)]
+pub struct FolderReport {
+    pub algorithm_used: String,
+    pub duplicate_groups: Vec<DuplicateGroup>,
+}
 
+pub fn generate_folder_report(algorithm: &HashAlgorithm, groups: Vec<(Vec<PathBuf>, Vec<PathBuf>)>, output_path: &Path) {
+    let duplicate_groups: Vec<DuplicateGroup> = groups.into_iter().map(|(files, quarantined)| {
+        DuplicateGroup {
+            files: files.iter().map(|p| p.display().to_string()).collect(),
+            quarantined: quarantined.iter().map(|p| p.display().to_string()).collect(),
+        }
+    }).collect();
+    let report = FolderReport {
+        algorithm_used: format!("{:?}", algorithm),
+        duplicate_groups,
+    };
     match serde_json::to_string_pretty(&report) {
         Ok(json_str) => {
             if let Err(e) = File::create(output_path).and_then(|mut f| f.write_all(json_str.as_bytes())) {

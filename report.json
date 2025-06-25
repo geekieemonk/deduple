@@ -1,0 +1,14 @@
+{
+  "algorithm_used": "Sha256",
+  "duplicate_groups": [
+    {
+      "files": [
+        "C:\\Users\\Arindam\\Desktop\\deduple\\New folder\\a.txt (2).txt",
+        "C:\\Users\\Arindam\\Desktop\\deduple\\New folder\\a.txt - Copy.txt"
+      ],
+      "quarantined": [
+        ".quarantine\\20250625171107_a.txt - Copy.txt"
+      ]
+    }
+  ]
+}

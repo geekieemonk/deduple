@@ -7,52 +7,41 @@ use blake3;
 use xxhash_rust::xxh3::Xxh3;
 use crate::cli::HashAlgorithm;
 
-pub fn hash_file(path: &Path, algo: &HashAlgorithm) -> Result<String, std::io::Error> {
+fn read_file_in_chunks<F>(path: &Path, mut update_fn: F) -> Result<(), std::io::Error>
+where
+    F: FnMut(&[u8]),
+{
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);
+    let mut buffer = [0u8; 8192];
+    loop {
+        let bytes_read = reader.read(&mut buffer)?;
+        if bytes_read == 0 {
+            break;
+        }
+        update_fn(&buffer[..bytes_read]);
+    }
+    Ok(())
+}
 
+pub fn hash_file(path: &Path, algo: &HashAlgorithm) -> Result<String, std::io::Error> {
     match algo {
         HashAlgorithm::Sha256 => {
             let mut hasher = Sha256::new();
-            let mut buffer = [0u8; 8192];
-            loop {
-                let bytes_read = reader.read(&mut buffer)?;
-                if bytes_read == 0 {
-                    break;
-                }
-                hasher.update(&buffer[..bytes_read]);
-            }
+            read_file_in_chunks(path, |chunk| { hasher.update(chunk); })?;
             Ok(format!("{:x}", hasher.finalize()))
         }
         HashAlgorithm::Blake3 => {
             let mut hasher = blake3::Hasher::new();
-            let mut buffer = [0u8; 8192];
-            loop {
-                let bytes_read = reader.read(&mut buffer)?;
-                if bytes_read == 0 {
-                    break;
-                }
-                hasher.update(&buffer[..bytes_read]);
-            }
+            read_file_in_chunks(path, |chunk| { hasher.update(chunk); })?;
             Ok(hasher.finalize().to_hex().to_string())
         }
         HashAlgorithm::Xxhash => {
             let mut hasher = Xxh3::new();
-            let mut buffer = [0u8; 8192];
-            loop {
-                let bytes_read = reader.read(&mut buffer)?;
-                if bytes_read == 0 {
-                    break;
-                }
-                hasher.update(&buffer[..bytes_read]);
-            }
+            read_file_in_chunks(path, |chunk| { hasher.update(chunk); })?;
             Ok(format!("{:x}", hasher.digest()))
         }
     }
 }
 
-pub fn compare_files(file1: &Path, file2: &Path, algo: &HashAlgorithm) -> Result<bool, std::io::Error> {
-    let hash1 = hash_file(file1, algo)?;
-    let hash2 = hash_file(file2, algo)?;
-    Ok(hash1 == hash2)
-}
+
