@@ -12,6 +12,9 @@ pub struct CliArgs {
     pub report: PathBuf,
     #[arg(long)]
     pub dir: PathBuf,
+       #[arg(long)]
+    pub img_folder: Option<PathBuf>,
+
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, ValueEnum)]
