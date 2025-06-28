@@ -31,7 +31,7 @@ fn main() {
     let report_path = args.report;
     let dir = args.dir;
 
-    println!("📂 Scanning folder: {}", dir.display());
+    println!("Scanning folder: {}", dir.display());
 
     
     let mut files = Vec::new();
@@ -51,7 +51,7 @@ fn main() {
                 hash_map.entry(hash).or_default().push(file.clone());
             }
             Err(e) => {
-                eprintln!("❌ Failed to hash {}: {}", file.display(), e);
+                eprintln!("Failed to hash {}: {}", file.display(), e);
             }
         }
     }
@@ -64,7 +64,7 @@ fn main() {
         }
     }
 
-    println!("📦 Found {} groups of duplicates.", duplicate_groups.len());
+    println!("Found {} groups of duplicates.", duplicate_groups.len());
 
     let mut report_groups = Vec::new();
 
@@ -80,11 +80,11 @@ fn main() {
         for file in group.iter().skip(1) {
             match quarantine_file(file, dry_run) {
                 Ok(Some(q)) => {
-                    println!("🧼 Quarantined: {}", q.display());
+                    println!(" Quarantined: {}", q.display());
                     quarantined.push(q);
                 }
                 Ok(None) => {} // dry-run or skipped
-                Err(e) => eprintln!("⚠️ Failed to quarantine {}: {}", file.display(), e),
+                Err(e) => eprintln!("Failed to quarantine {}: {}", file.display(), e),
             }
         }
 
@@ -93,6 +93,6 @@ fn main() {
 
     
 generate_folder_report(&algorithm, report_groups, &report_path);
-println!("✅ Report saved to {}", report_path.display());
+println!("Report saved to {}", report_path.display());
 
 }

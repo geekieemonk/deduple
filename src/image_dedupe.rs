@@ -24,9 +24,9 @@ pub fn dedupe_images_in_folder(folder: &Path, threshold: u32) -> Result<(), Box<
             let img2 = &images[j];
 
             match are_images_similar(img1, img2, threshold) {
-                Ok(true) => println!("✅ Similar: {} and {}", img1.display(), img2.display()),
-                Ok(false) => {} // Not similar, skip
-                Err(e) => eprintln!("⚠️ Error comparing {} and {}: {}", img1.display(), img2.display(), e),
+                Ok(true) => println!("Similar: {} and {}", img1.display(), img2.display()),
+                Ok(false) => {} 
+                Err(e) => eprintln!("Error comparing {} and {}: {}", img1.display(), img2.display(), e),
             }
         }
     }
