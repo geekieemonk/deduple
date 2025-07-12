@@ -25,11 +25,23 @@ pub fn dedupe_images_in_folder(folder: &Path, threshold: u32) -> Result<(), Box<
 
             match are_images_similar(img1, img2, threshold) {
                 Ok(true) => println!("Similar: {} and {}", img1.display(), img2.display()),
-                Ok(false) => {} 
+                Ok(false) => {}
                 Err(e) => eprintln!("Error comparing {} and {}: {}", img1.display(), img2.display(), e),
             }
         }
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_dedupe_images_in_folder_empty() {
+        // Should succeed with empty/nonexistent folder
+        let tmp = tempfile::tempdir().unwrap();
+        let res = dedupe_images_in_folder(tmp.path(), 10);
+        assert!(res.is_ok());
+    }
 }

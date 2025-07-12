@@ -6,10 +6,9 @@ pub fn are_images_similar(
     img2_path: &Path,
     threshold: u32,
 ) -> Result<bool, String> {
-   
     let img1 = image::open(img1_path)
         .map_err(|e| format!("Failed to open {}: {}", img1_path.display(), e))?;
-   
+
     let img2 = image::open(img2_path)
         .map_err(|e| format!("Failed to open {}: {}", img2_path.display(), e))?;
     
@@ -18,14 +17,11 @@ pub fn are_images_similar(
         .hash_alg(HashAlg::Gradient)
         .to_hasher();
 
-   
     let hash1 = hasher.hash_image(&img1);
     let hash2 = hasher.hash_image(&img2);
 
-   
     let dist = hash1.dist(&hash2);
 
-    
     println!(
         "🔍 Comparing:\n  {} ↔ {}\n  → Distance = {}",
         img1_path.display(),
@@ -33,6 +29,15 @@ pub fn are_images_similar(
         dist
     );
 
-    
     Ok(dist <= threshold)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_are_images_similar_invalid_path() {
+        let res = are_images_similar(Path::new("/nonexistent1.png"), Path::new("/nonexistent2.png"), 10);
+        assert!(res.is_err());
+    }
 }

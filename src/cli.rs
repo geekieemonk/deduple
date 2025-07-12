@@ -2,7 +2,7 @@ use clap::{Parser, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
-#[command(name = "deduple", about = "Detect and quarantine duplicate files in a directory.")]
+#[command(name = "duplex", about = "Detect and quarantine duplicate files in a directory.")]
 pub struct CliArgs {
     #[arg(long, value_enum, default_value = "sha256")]
     pub algorithm: HashAlgorithm,
@@ -14,7 +14,8 @@ pub struct CliArgs {
     pub dir: PathBuf,
        #[arg(long)]
     pub img_folder: Option<PathBuf>,
-
+    #[arg(long)]
+    pub restore: Option<PathBuf>,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Debug, ValueEnum)]
