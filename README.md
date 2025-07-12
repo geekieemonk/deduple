@@ -24,7 +24,7 @@ A fast and efficient command-line tool for detecting and managing duplicate file
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/geekieemonk/deduple
 cd deduple
 
 # Build the project
