@@ -183,13 +183,7 @@ cargo build
 - `src/quarantine.rs`: File quarantine management
 - `src/report.rs`: Report generation
 
-## License
 
-[Add your license information here]
-
-## Contributing
-
-[Add contribution guidelines here]
 
 ## Acknowledgments
 
